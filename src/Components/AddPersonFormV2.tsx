@@ -2,12 +2,12 @@ import { useState } from "react";
 import Loading from "./Loading";
 import { usePerson } from "../Contexts/PersonContext";
 
-interface AddPersonFormProps {
+interface AddPersonFormV2Props {
   onClose: () => void;
 }
 
-export default function AddPersonForm({ onClose }: AddPersonFormProps) {
-  const { createPerson } = usePerson();
+export default function AddPersonFormV2({ onClose }: AddPersonFormV2Props) {
+  const { createPersonV2 } = usePerson();
   const [name, setName] = useState("");
   const [gender, setGender] = useState<number | null>();
   const [cpf, setCpf] = useState("");
@@ -16,6 +16,7 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
   const [naturality, setNaturality] = useState("");
   const [nationality, setNationality] = useState("");
   const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +26,7 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
 
     setLoading(true);
     try {
-      const newClient = await createPerson({
+      const newClient = await createPersonV2({
         name: name.trim(),
         gender: gender || null,
         cpf: cpf.trim(),
@@ -34,6 +35,7 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
         naturality: naturality.trim() || null,
         nationality: nationality.trim() || null,
         password: password,
+        address: address,
       });
       if (newClient) {
         onClose();
@@ -151,6 +153,19 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Endereço *</label>
+          <input
+            type="text"
+            placeholder="Digite seu endereço"
+            minLength={8}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />

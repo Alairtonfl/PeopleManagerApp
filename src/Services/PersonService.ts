@@ -3,13 +3,14 @@ import apiClient from './ApiClient';
 export interface Person {
   id: number;
   name: string;
-  gender: number;
+  gender?: number | null;
   cpf: string;
   birthDate: string;
   email?: string | null;
   naturality?: string | null;
   nationality?: string | null
   password?: string;
+  address?: string | null;
 }
 
 export interface PagedPersonsResponse {
@@ -24,7 +25,7 @@ export async function fetchPersons(): Promise<PagedPersonsResponse> {
 
 export async function createPerson(data: { 
   name: string, 
-  gender: number, 
+  gender?: number | null, 
   cpf: string, 
   birthDate: string, 
   email?: string | null;
@@ -33,6 +34,21 @@ export async function createPerson(data: {
   password: string
  }): Promise<Person> {
   const response = await apiClient.post('/api/v1/people/create', data);
+  return response.data.data;
+}
+
+export async function createPersonV2(data: { 
+  name: string, 
+  gender?: number | null, 
+  cpf: string, 
+  birthDate: string, 
+  email?: string | null;
+  naturality?: string | null,
+  nationality?: string | null,
+  password: string,
+  address?: string | null
+ }): Promise<Person> {
+  const response = await apiClient.post('/api/v2/people/create', data);
   return response.data.data;
 }
 

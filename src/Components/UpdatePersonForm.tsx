@@ -3,14 +3,17 @@ import Loading from "./Loading";
 import { usePerson } from "../Contexts/PersonContext";
 
 interface UpdatePersonFormProps {
-  personId: number; 
+  personId: number;
   onClose: () => void;
 }
 
-export default function UpdatePersonForm({ personId, onClose }: UpdatePersonFormProps) {
+export default function UpdatePersonForm({
+  personId,
+  onClose,
+}: UpdatePersonFormProps) {
   const { updatePerson, getPersonById } = usePerson();
   const [name, setName] = useState("");
-  const [gender, setGender] = useState(0);
+  const [gender, setGender] = useState<number | null>();
   const [cpf, setCpf] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [email, setEmail] = useState("");
@@ -21,31 +24,31 @@ export default function UpdatePersonForm({ personId, onClose }: UpdatePersonForm
   const [initialLoading, setInitialLoading] = useState(true);
 
   // 🔹 Carrega os dados da pessoa ao abrir o modal
-    useEffect(() => {
+  useEffect(() => {
     const loadPerson = async () => {
-        try{
+      try {
         const person = await getPersonById(personId);
         if (person) {
-            setName(person.name || "");
-            setGender(person.gender);
-            setCpf(person.cpf || "");
-            setBirthDate(person.birthDate?.split("T")[0] || "");
-            setEmail(person.email || "");
-            setNaturality(person.naturality || "");
-            setNationality(person.nationality || "");
+          setName(person.name || "");
+          setGender(person.gender || null);
+          setCpf(person.cpf || "");
+          setBirthDate(person.birthDate?.split("T")[0] || "");
+          setEmail(person.email || "");
+          setNaturality(person.naturality || "");
+          setNationality(person.nationality || "");
         } else {
+          setError("Erro ao carregar dados da pessoa.");
+        }
+      } catch (err) {
         setError("Erro ao carregar dados da pessoa.");
-        }
-        }catch(err){
-            setError("Erro ao carregar dados da pessoa.");
-        }
-        finally{
-            setInitialLoading(false);
-        }
+      } finally {
+        setInitialLoading(false);
+      }
     };
     loadPerson();
-    }, [personId]);
+  }, [personId]);
 
+  // 🔹 Atualiza a pessoa
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -59,7 +62,7 @@ export default function UpdatePersonForm({ personId, onClose }: UpdatePersonForm
         birthDate,
         email: email.trim() || null,
         naturality: naturality.trim() || null,
-        nationality: nationality.trim() || null
+        nationality: nationality.trim() || null,
       });
 
       onClose();
@@ -92,89 +95,92 @@ export default function UpdatePersonForm({ personId, onClose }: UpdatePersonForm
       >
         <h2 className="text-xl font-bold mb-4">Editar Pessoa</h2>
 
-       <div>
-      <label className="block mb-1 font-medium">Nome</label>
-      <input
-        type="text"
-        placeholder="Nome da pessoa"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">Nome</label>
+          <input
+            type="text"
+            placeholder="Nome da pessoa"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">Sexo</label>
-      <select
-        value={gender}
-        onChange={e => setGender(Number(e.target.value))}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value={99}>Selecione</option>
-        <option value={0}>Feminino</option>
-        <option value={1}>Masculino</option>
-        <option value={2}>Outro</option>
-      </select>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">Sexo</label>
+          <select
+            value={gender ?? ""}
+            onChange={(e) => {
+              const value =
+                e.target.value === "" ? null : Number(e.target.value);
+              setGender(value);
+            }}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Selecione</option>
+            <option value={0}>Feminino</option>
+            <option value={1}>Masculino</option>
+            <option value={2}>Outro</option>
+          </select>
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">CPF</label>
-      <input
-        type="text"
-        placeholder="000.000.000-00"
-        value={cpf}
-        onChange={e => setCpf(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">CPF</label>
+          <input
+            type="text"
+            placeholder="000.000.000-00"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">Data de Nascimento</label>
-      <input
-        type="date"
-        value={birthDate}
-        onChange={e => setBirthDate(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">Data de Nascimento</label>
+          <input
+            type="date"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">E-mail</label>
-      <input
-        type="email"
-        placeholder="email@exemplo.com"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">E-mail</label>
+          <input
+            type="email"
+            placeholder="email@exemplo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">Naturalidade</label>
-      <input
-        type="text"
-        placeholder="Cidade de nascimento"
-        value={naturality}
-        onChange={e => setNaturality(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">Naturalidade</label>
+          <input
+            type="text"
+            placeholder="Cidade de nascimento"
+            value={naturality}
+            onChange={(e) => setNaturality(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-    <div>
-      <label className="block mb-1 font-medium">Nacionalidade</label>
-      <input
-        type="text"
-        placeholder="Ex: Brasileira"
-        value={nationality}
-        onChange={e => setNationality(e.target.value)}
-        className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
+        <div>
+          <label className="block mb-1 font-medium">Nacionalidade</label>
+          <input
+            type="text"
+            placeholder="Ex: Brasileira"
+            value={nationality}
+            onChange={(e) => setNationality(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
         <div className="flex justify-end gap-2 mt-6">
           <button

@@ -9,7 +9,7 @@ export interface Person {
   email?: string | null;
   naturality?: string | null;
   nationality?: string | null
-  password: string;
+  password?: string;
 }
 
 export interface PagedPersonsResponse {
@@ -47,4 +47,9 @@ export async function deletePerson(id: number): Promise<void> {
 
 export async function getPersonByCpf(cpf: string): Promise<void> {
   await apiClient.get(`/api/v1/people/get-by-cpf/${cpf}`);
+}
+
+export async function getPersonById(id: number): Promise<Person> {
+  const response = await apiClient.get(`/api/v1/people/get-by-id/${id}`);
+  return response.data.data;
 }

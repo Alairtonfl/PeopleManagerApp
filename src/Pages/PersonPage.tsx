@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { usePerson } from '../Contexts/PersonContext';
-import { Eye, Plus } from 'lucide-react';
-import Navbar from '../Components/NavBar';
+import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
 import AddPersonForm from '../Components/AddPersonForm';
 import { useNavigate } from 'react-router-dom';
+import UpdatePersonForm from '../Components/UpdatePersonForm';
 
 export default function Dashboard() {
   const { persons, loading, fetchPersons, createPerson, error, deletePerson, updatePerson } = usePerson();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddPersonOpen, setIsAddPersonOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPersons();
@@ -19,8 +18,26 @@ export default function Dashboard() {
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  function genderNumberToString(gender: number): string {
+  switch (gender) {
+    case 0:
+      return "Feminino";
+    case 1:
+      return "Masculino";
+    case 2:
+      return "Outro";
+    default:
+      return "";
+  }
+}
   const openAddPersonModal = () => setIsAddPersonOpen(true);
   const closeAddPersonModal = () => setIsAddPersonOpen(false);
+  const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
+  
+  const handleEdit = (id: number) => {
+    setSelectedPersonId(id);
+    setShowUpdateModal(true);
+  };const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   return (
     <>
@@ -53,6 +70,7 @@ export default function Dashboard() {
             <tr className="bg-slate-800">
               <th className="border border-slate-700 px-4 py-2 text-left">Nome</th>
               <th className="border border-slate-700 px-4 py-2 text-left">CPF</th>
+              <th className="border border-slate-700 px-4 py-2 text-left">Sexo</th>
               <th className="border border-slate-700 px-4 py-2 text-left">Data de Nascimento</th>
               <th className="border border-slate-700 px-4 py-2 text-left">Ações</th>
             </tr>
@@ -72,20 +90,36 @@ export default function Dashboard() {
                   <td className="border border-slate-700 px-4 py-2">{person.name}</td>
                   <td className="border border-slate-700 px-4 py-2">{person.cpf}</td>
                   <td className="border border-slate-700 px-4 py-2">{new Date(person.birthDate).toLocaleDateString()}</td>
+                  <td className="border border-slate-700 px-4 py-2">{genderNumberToString(person.gender)}</td>
                   <td className="border border-slate-700 px-4 py-2">
-                    <button
-                      onClick={() => navigate(`/persons/${person.id}`)}
-                      title="Ver Detalhes"
-                      className="bg-green-600 hover:bg-green-700 p-2 rounded flex items-center justify-center"
-                    >
-                      <Eye size={20} className="text-white hover:text-gray-300 transition-colors" />
-                    </button>
+                  <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEdit(person.id)}
+                        title="Editar"
+                        className="bg-green-600 hover:bg-green-700 p-2 rounded flex items-center justify-center transition-colors"
+                        >
+                        <Pencil size={20} className="text-white hover:text-gray-300" />
+                      </button>
+                      <button
+                        onClick={() => deletePerson(person.id)}
+                        title="Excluir"
+                        className="bg-red-600 hover:bg-red-700 p-2 rounded flex items-center justify-center transition-colors"
+                      >
+                        <Trash2 size={20} className="text-white hover:text-gray-300" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+            {showUpdateModal && selectedPersonId && (
+            <UpdatePersonForm
+              personId={selectedPersonId}
+              onClose={() => setShowUpdateModal(false)}
+            />
+          )}
       </main>
     </>
   );

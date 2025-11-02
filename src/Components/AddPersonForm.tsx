@@ -55,16 +55,15 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
   return (
     <div
   className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-  onClick={onClose} // fecha modal ao clicar fora do formulário
+  onClick={onClose} 
 >
   <form
     onSubmit={handleSubmit}
     className="bg-slate-800 p-6 rounded-xl shadow-lg w-full max-w-md text-white space-y-4"
-    onClick={e => e.stopPropagation()} // impede fechar ao clicar dentro do form
+    onClick={e => e.stopPropagation()}
   >
     <h2 className="text-xl font-bold mb-4">Adicionar Cliente</h2>
 
-    {/* Nome */}
     <div>
       <label className="block mb-1 font-medium">Nome *</label>
       <input
@@ -78,7 +77,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* Sexo / Gender */}
     <div>
       <label className="block mb-1 font-medium">Sexo</label>
       <select
@@ -94,7 +92,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* CPF */}
     <div>
       <label className="block mb-1 font-medium">CPF *</label>
       <input
@@ -108,7 +105,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* Data de Nascimento / birthDate */}
     <div>
       <label className="block mb-1 font-medium">Data de Nascimento *</label>
       <input
@@ -121,7 +117,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* E-mail */}
     <div>
       <label className="block mb-1 font-medium">E-mail</label>
       <input
@@ -134,7 +129,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* Naturalidade */}
     <div>
       <label className="block mb-1 font-medium">Naturalidade</label>
       <input
@@ -146,7 +140,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       />
     </div>
 
-    {/* Nacionalidade */}
     <div>
       <label className="block mb-1 font-medium">Nacionalidade</label>
       <input
@@ -158,12 +151,12 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       />
     </div>
 
-    {/* Senha */}
     <div>
       <label className="block mb-1 font-medium">Senha *</label>
       <input
         type="password"
         placeholder="Digite uma senha"
+        minLength={8}
         value={password}
         onChange={e => setPassword(e.target.value)}
         className="w-full px-4 py-2 rounded bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -172,7 +165,6 @@ export default function AddPersonForm({ onClose }: AddPersonFormProps) {
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
 
-    {/* Botões */}
     <div className="flex justify-end gap-2 mt-6">
       <button
         type="button"

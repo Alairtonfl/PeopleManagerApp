@@ -5,6 +5,7 @@ import {
   createPerson as createPersonService,
   updatePerson as updatePersonService,
   deletePerson as deletePersonService,
+  getPersonById as getPersonByIdService
 } from '../Services/PersonService';
 
 interface PersonContextType {
@@ -22,6 +23,7 @@ interface PersonContextType {
     password: string }) => Promise<Person | null>;
   updatePerson: (id: number, data: Partial<Person>) => Promise<Person | null>;
   deletePerson: (id: number) => Promise<boolean>;
+  getPersonById: (id: number) => Promise<Person | null>;
 }
 
 const PersonContext = createContext<PersonContextType>({
@@ -31,7 +33,8 @@ const PersonContext = createContext<PersonContextType>({
   fetchPersons: async () => {},
   createPerson: async () => null,
   updatePerson: async () => null,
-  deletePerson: async () => false
+  deletePerson: async () => false,
+  getPersonById: async () => null
 });
 
 export const PersonProvider = ({ children }: { children: ReactNode }) => {
@@ -108,6 +111,20 @@ export const PersonProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+const getPersonById = async (id: number): Promise<Person | null> => {
+  setLoading(true);
+  setError(null);
+  try {
+    const person = await getPersonByIdService(id);
+    return person; 
+  } catch (err: any) {
+    setError(err.message || "Erro ao carregar pessoa");
+    return null;
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <PersonContext.Provider
       value={{
@@ -117,7 +134,8 @@ export const PersonProvider = ({ children }: { children: ReactNode }) => {
         fetchPersons,
         createPerson,
         updatePerson,
-        deletePerson
+        deletePerson,
+        getPersonById
       }}
     >
       {children}
